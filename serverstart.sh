@@ -1,8 +1,6 @@
 #!/bin/bash
 
-echo "export app"
 export FLASK_APP=/home/lbarra/maonamassa/TW-MNM-DI/hello.py
-echo "exported"
-echo "starting server"
-flask run -h 0.0.0.0 -p 50002
-echo "server running"
+#touch /tmp/teste
+python3 -m flask run -h 0.0.0.0 -p 50002
+#python3 hello.py runserver -t 0.0.0.0 -p 50002
