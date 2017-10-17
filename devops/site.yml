@@ -1,0 +1,25 @@
+---
+- name: Configure application
+  hosts: all
+  become: true
+  become_method: sudo
+  vars:
+    app_name: TW-MNM-DI
+    repo_url: https://github.com/larissabarra/TW-MNM-DI.git
+    repo_remote: origin
+    repo_version: master
+    webapps_dir: /home/vagrant/maonamassa
+  tasks:
+    - name: Install packages
+      apt: update_cache=yes name={{ item }} state=present
+      with_items:
+        - git
+        - python3
+        - python-pip
+        - nginx
+    - name: git pull project
+      git: repo={{repo_url}} dest={{webapps_dir}}/{{app_name}} version=master
+      notify:
+        - restart app
+    - pip: requirements={{webapps_dir}}/{{app_name}}/requirements.txt
+    - shell: "python3 -m flask run -h 0.0.0.0 -p 50002"
