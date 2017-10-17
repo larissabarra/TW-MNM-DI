@@ -3,8 +3,8 @@ Description=Start flask server service
 After=syslog.target
 
 [Service]
-User=lbarra
-WorkingDirectory=/home/lbarra/maonamassa/TW-MNM-DI
+User=vagrant
+WorkingDirectory=/home/vagrant/maonamassa/TW-MNM-DI
 Type=forking
 ExecStart=/bin/bash serverstart.sh
 SuccessExitStatus=143

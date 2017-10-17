@@ -8,18 +8,43 @@
     repo_url: https://github.com/larissabarra/TW-MNM-DI.git
     repo_remote: origin
     repo_version: master
-    webapps_dir: /home/vagrant/maonamassa
+    webapps_dir: /home/lbarra/maonamassa
   tasks:
-    - name: Install packages
+    - name: Install git, python and pip
       apt: update_cache=yes name={{ item }} state=present
       with_items:
         - git
         - python3
-        - python-pip
-        - nginx
-    - name: git pull project
+        - python3-pip
+        - systemd
+
+    - name: Git pull project
       git: repo={{repo_url}} dest={{webapps_dir}}/{{app_name}} version=master
       notify:
         - restart app
-    - pip: requirements={{webapps_dir}}/{{app_name}}/requirements.txt
-    - shell: "python3 -m flask run -h 0.0.0.0 -p 50002"
+
+    - name: Install flask
+      pip: executable=pip3 requirements={{webapps_dir}}/{{app_name}}/requirements.txt
+
+    - name: Change service file to 775
+      file:
+        path: '{{webapps_dir}}/{{app_name}}/lbarraserverstart.service'
+        mode: 0775
+
+    - name: Change shell file to 775
+      file:
+        path: '{{webapps_dir}}/{{app_name}}/serverstart.sh'
+        mode: 0775
+
+    - name: Copy service file
+      shell: cp '{{webapps_dir}}/{{app_name}}/lbarraserverstart.service' /etc/systemd/system/lbarraserverstart.service
+
+    - name: Enable service for starting application
+      systemd:
+        name: lbarraserverstart
+        enabled: yes
+        daemon_reload: yes
+        state: started
+
+    - name: Make sure the service is running
+      systemd: state=started name=lbarraserverstart
