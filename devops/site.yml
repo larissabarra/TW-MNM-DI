@@ -20,8 +20,6 @@
 
     - name: Git pull project
       git: repo={{repo_url}} dest={{webapps_dir}}/{{app_name}} version=master
-      notify:
-        - restart app
 
     - name: Install flask
       pip: executable=pip3 requirements={{webapps_dir}}/{{app_name}}/requirements.txt
@@ -41,10 +39,7 @@
 
     - name: Enable service for starting application
       systemd:
-        name: lbarraserverstart
-        enabled: yes
+        name: lbarraserverstart.service
         daemon_reload: yes
+        enabled: yes
         state: started
-
-    - name: Make sure the service is running
-      systemd: state=started name=lbarraserverstart
